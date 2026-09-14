@@ -1,0 +1,25 @@
+{
+  "project": "rally-fpga",
+  "source_commit": "f82a0f0127c6d2c4a394f4f00706604d8d47ef1d",
+  "python_test_methods": 7,
+  "python_status": "PASS",
+  "model_demo_status": "PASS",
+  "rtl_status": "NOT RUN: Icarus Verilog unavailable",
+  "generic_synthesis_status": "NOT RUN",
+  "physical_hardware_tested": false,
+  "github_repository_created": false,
+  "independent_test_execution": true,
+  "source_sha256": {
+    "test_models.py": "6c798fae3d373226019231e6378b87ccc3ad4599f0709a048c5542918449f7a3",
+    "rally.py": "e304d46c412914ac6b39c837761dcdb4657aa65b0b1d940396c2515ba190ed86",
+    "replay.py": "6bd01be55108b7ca8a5a9366905fa0fee88d63c40230bd17f9f97969bc870271",
+    "rtl/rally.sv": "d0637535cf8f0e65c26e9abe1b1ee4605d76151d1467f1d4caf94dcece51eebb",
+    "rtl/uart.sv": "f9711335a2eb2f9b42b77aa6333f3289c720662f681157f61507abd0c69c3bb8",
+    "board/as02mc04_candidate.xdc": "7edb5733ca9c95c13d8d34d87139b81e086bec64f66815ce59a6afe7753de325",
+    "board/build.tcl": "5354aa11286974366e51b5da00a0c194276deb51bd8b9fa77dd656f23acbae29",
+    "board/rally_as02mc04.sv": "5b411d645ead78b40818a2e7de5b97e843ec1fc39d7ff02a6a53b640e16d8547",
+    "sim/rally_bridge.sv": "81a2267c4acdd47d293d327c00088f25f3cf586aa9e1618d85ad8be0fe507de5",
+    "sim/check_rtl.py": "9b58e11804e29256ecff7b1d7f6cf0f012b142325b9404b91483b4f1ead29c37",
+    ".github/workflows/verify.yml": "efb39a264cabdd27ca8c41e709382f55fd84438afd3f79951bf51e924933b985"
+  }
+}

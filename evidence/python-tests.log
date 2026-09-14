@@ -1,0 +1,12 @@
+test_all_single_bit_corruptions (test_models.RallyTests.test_all_single_bit_corruptions) ... ok
+test_control_boundaries (test_models.RallyTests.test_control_boundaries) ... ok
+test_crc_known_vector (test_models.RallyTests.test_crc_known_vector) ... ok
+test_disabled_and_deterministic_game (test_models.RallyTests.test_disabled_and_deterministic_game) ... ok
+test_game_failure_is_zero_movement (test_models.RallyTests.test_game_failure_is_zero_movement) ... ok
+test_reject_stale_unsafe_and_bad_status (test_models.RallyTests.test_reject_stale_unsafe_and_bad_status) ... ok
+test_request_roundtrip_random (test_models.RallyTests.test_request_roundtrip_random) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.062s
+
+OK

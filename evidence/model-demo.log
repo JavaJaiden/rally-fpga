@@ -1,0 +1,15 @@
+PYTHON MODEL — NOT FPGA HARDWARE
+{
+  "frame": 999,
+  "x": 744,
+  "y": 420,
+  "paddle": 416,
+  "move": 4,
+  "status": 0,
+  "error": "",
+  "host_rtt_ns": 12038,
+  "hits": 4,
+  "misses": 0,
+  "enabled": true,
+  "backend": "PYTHON MODEL \u2014 NOT FPGA HARDWARE"
+}
