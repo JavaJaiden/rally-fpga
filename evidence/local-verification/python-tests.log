@@ -1,0 +1,16 @@
+test_all_single_bit_corruptions (test_models.RallyTests.test_all_single_bit_corruptions) ... ok
+test_control_boundaries (test_models.RallyTests.test_control_boundaries) ... ok
+test_crc_known_vector (test_models.RallyTests.test_crc_known_vector) ... ok
+test_disabled_and_deterministic_game (test_models.RallyTests.test_disabled_and_deterministic_game) ... ok
+test_game_failure_is_zero_movement (test_models.RallyTests.test_game_failure_is_zero_movement) ... ok
+test_reject_stale_unsafe_and_bad_status (test_models.RallyTests.test_reject_stale_unsafe_and_bad_status) ... ok
+test_request_roundtrip_random (test_models.RallyTests.test_request_roundtrip_random) ... ok
+test_rtl_timeout_stays_fail_closed_on_later_frames (test_models.RallyTests.test_rtl_timeout_stays_fail_closed_on_later_frames) ... ok
+test_mixed_backends_rejected (test_replay.ReplayTests.test_mixed_backends_rejected) ... ok
+test_replay_retains_trace_digest_and_escapes_label (test_replay.ReplayTests.test_replay_retains_trace_digest_and_escapes_label) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.067s
+
+OK
+Wrote 1 recorded frames to /var/folders/9_/wv598cvx6gg5p7yzbck0rjcr0000gn/T/tmpd3ioo_y6/out.html
