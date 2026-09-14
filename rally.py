@@ -120,7 +120,9 @@ class RTLBackend:
     def exchange(self, data: bytes) -> bytes:
         if not 1 <= len(data) <= 40:
             raise ValueError('RTL bridge supports 1–40 input bytes')
-        assert self.process.stdin is not None
+        if (self.process.stdin is None or self.process.stdin.closed
+                or self.process.poll() is not None):
+            raise OSError('RTL bridge is closed; restart the backend to reconnect')
         self.process.stdin.write(f'{len(data)} {data.hex()}\n')
         self.process.stdin.flush()
         try:

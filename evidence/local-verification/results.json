@@ -1,0 +1,167 @@
+{
+  "status": "PASS",
+  "started_utc": "2026-09-14T23:41:16.880822+00:00",
+  "levels": {
+    "python": "PASS",
+    "rtl_simulation": {
+      "status": "PASS",
+      "engine": "Icarus Verilog",
+      "counts": {
+        "rally_transactions": 1170,
+        "uart_cases": 257,
+        "board_uart_requests": 32
+      },
+      "hardware_tested": false
+    },
+    "demo": {
+      "status": "PASS",
+      "frames_per_backend": 1000,
+      "rejected_per_backend": 43,
+      "model_rtl_game_states_identical": true
+    },
+    "generic_synthesis": {
+      "status": "PASS",
+      "tops": [
+        "rally_framer",
+        "uart_rx",
+        "uart_tx"
+      ]
+    }
+  },
+  "commands": [
+    {
+      "name": "python-tests",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "-m",
+        "unittest",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "iverilog-version",
+      "command": [
+        "iverilog",
+        "-V"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "rtl-tests",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "sim/check_rtl.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "demo-model",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "rally.py",
+        "--backend",
+        "model",
+        "--headless",
+        "1000",
+        "--fault-every",
+        "23",
+        "--trace",
+        "out/rally-model.jsonl"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "demo-rtl",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "rally.py",
+        "--backend",
+        "rtl",
+        "--headless",
+        "1000",
+        "--fault-every",
+        "23",
+        "--trace",
+        "out/rally-rtl.jsonl"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "replay",
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "replay.py",
+        "--trace",
+        "out/rally-rtl.jsonl",
+        "--output",
+        "out/rally-replay.html"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "yosys-version",
+      "command": [
+        "/Users/jaiden/Documents/Codex/2026-09-14/use-this-handoff-package-to-continue/work/verification-venv/bin/yowasp-yosys",
+        "-V"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "synthesis-rally_framer",
+      "command": [
+        "/Users/jaiden/Documents/Codex/2026-09-14/use-this-handoff-package-to-continue/work/verification-venv/bin/yowasp-yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog -sv rtl/rally.sv rtl/uart.sv; synth -top rally_framer; check -assert; stat"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "synthesis-uart_rx",
+      "command": [
+        "/Users/jaiden/Documents/Codex/2026-09-14/use-this-handoff-package-to-continue/work/verification-venv/bin/yowasp-yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog -sv rtl/rally.sv rtl/uart.sv; synth -top uart_rx; check -assert; stat"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "synthesis-uart_tx",
+      "command": [
+        "/Users/jaiden/Documents/Codex/2026-09-14/use-this-handoff-package-to-continue/work/verification-venv/bin/yowasp-yosys",
+        "-Q",
+        "-T",
+        "-p",
+        "read_verilog -sv rtl/rally.sv rtl/uart.sv; synth -top uart_tx; check -assert; stat"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "physical_board_tested": false,
+  "routed_timing_verified": false,
+  "source_sha256": {
+    ".github/workflows/verify.yml": "e06e86e5c722fcc1009a2b41d97a1f3d162871e1ee8cf44e5fb65e606f14cc7e",
+    "board/as02mc04_candidate.xdc": "7edb5733ca9c95c13d8d34d87139b81e086bec64f66815ce59a6afe7753de325",
+    "board/build.tcl": "5354aa11286974366e51b5da00a0c194276deb51bd8b9fa77dd656f23acbae29",
+    "board/rally_as02mc04.sv": "5b411d645ead78b40818a2e7de5b97e843ec1fc39d7ff02a6a53b640e16d8547",
+    "rally.py": "a2e741dfbff542372536c21970e19d36276a354288e7abca0026079c0599762c",
+    "replay.py": "5a7f29c1ed569e6ee42dc8afe4a34744af617162868d68e083cbb095d7af71ea",
+    "rtl/rally.sv": "d0637535cf8f0e65c26e9abe1b1ee4605d76151d1467f1d4caf94dcece51eebb",
+    "rtl/uart.sv": "f9711335a2eb2f9b42b77aa6333f3289c720662f681157f61507abd0c69c3bb8",
+    "sim/board_uart_tb.sv": "fc6a031a47deae7eee688a52631f22aac3096079618a1a471772755fd522ca30",
+    "sim/check_rtl.py": "d11566878e22da4b9813e40a8719ea923f1cf009d1b7e600edc9f79935013ff5",
+    "sim/rally_bridge.sv": "81a2267c4acdd47d293d327c00088f25f3cf586aa9e1618d85ad8be0fe507de5",
+    "test_models.py": "c4c7042da4ddc8ae8ba43a50b68c8e7cc4f93525f7a8bda6b4e3c32dc13d4213",
+    "test_replay.py": "48afacf0beaeb7247b7840f66aa54a4fa48071f7c24bc8960658179b270e1c7f",
+    "verify.py": "07079bf234d137f377903c55629c0f0b2e7b7fdceaa22bae1a40c1654252b056"
+  },
+  "base_commit": "72bccf5e0ba9651c270c3a06e73a0abd165a65b5",
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "iverilog": "Icarus Verilog version 13.0 (stable) (v13_0)",
+  "yosys": "Yosys 0.69 (git sha1 9f75ca1f9, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0)",
+  "finished_utc": "2026-09-14T23:41:46.978735+00:00"
+}

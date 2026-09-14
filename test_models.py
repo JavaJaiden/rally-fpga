@@ -2,6 +2,9 @@
 import random
 import struct
 import unittest
+import io
+import queue
+from unittest.mock import patch
 import rally as r
 
 class RallyTests(unittest.TestCase):
@@ -47,6 +50,27 @@ class RallyTests(unittest.TestCase):
         row=game.step(Broken())
         self.assertEqual(row['move'],0); self.assertEqual(game.paddle,before)
         self.assertIn('injected',row['error'])
+
+    def test_rtl_timeout_stays_fail_closed_on_later_frames(self):
+        class Process:
+            stdin = io.StringIO()
+            stdout = io.StringIO()
+            exited = False
+            def poll(self): return 0 if self.exited else None
+            def wait(self, timeout=None): self.exited = True
+        backend = r.RTLBackend.__new__(r.RTLBackend)
+        backend.process = Process()
+        backend.lines = queue.Queue()
+        game = r.Game()
+        with patch.object(backend.lines, 'get', side_effect=queue.Empty):
+            first = game.step(backend)
+        self.assertEqual(first['move'], 0)
+        self.assertIn('stopped responding', first['error'])
+        # Real close after timeout must make later exchanges predictable too.
+        backend.process.stdin.close()
+        second = game.step(backend)
+        self.assertEqual(second['move'], 0)
+        self.assertTrue(second['error'])
 
     def test_disabled_and_deterministic_game(self):
         a,b=r.Game(19),r.Game(19)

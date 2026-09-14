@@ -1,0 +1,17 @@
+{
+  "backend": "SystemVerilog simulation",
+  "frames": 1126,
+  "disabled_frames": 211,
+  "disabled_nonzero_movement": 0,
+  "transaction_errors": 0,
+  "space_toggle_off_and_on": "verified",
+  "escape_exit_code": 0,
+  "trace_sha256": "b37f975d8eb8bdeb7de896103da8243dbade262e1e80deadafaa71324ab3c0c1",
+  "physical_board": false,
+  "environment": "Installed Homebrew python-tk@3.14 (3.14.7), which upgraded Homebrew Python from 3.14.6 to 3.14.7.",
+  "browser_checks": {
+    "Rally": "Pause, frame scrubbing, rejected frame 22 with zero movement",
+    "FeedGuard": "Gap holds 103, repair advances to 106, overlap skips 1/takes 2, malformed holds 110",
+    "console_errors": 0
+  }
+}

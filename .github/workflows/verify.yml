@@ -26,19 +26,8 @@ jobs:
           sudo apt-get install -y iverilog yosys
           mkdir -p out/rtl
           { python3 --version; iverilog -V; yosys -V; } > out/tool-versions.txt 2>&1
-      - name: Python tests
-        run: python3 -m unittest -v 2>&1 | tee out/python-tests.log
-      - name: RTL tests
-        run: python3 sim/check_rtl.py 2>&1 | tee out/rtl-tests.log
-      - name: Demo
-        run: |
-          python3 rally.py --backend rtl --headless 600 --fault-every 23 --trace out/rally-rtl.jsonl
-          python3 replay.py --trace out/rally-rtl.jsonl --output out/rally-rtl-replay.html
-      - name: Generic structural checks
-        run: |
-          for top in rally_framer uart_rx uart_tx; do
-            yosys -Q -T -p "read_verilog -sv rtl/rally.sv rtl/uart.sv; hierarchy -check -top $top; proc; opt; check -assert; stat" | tee "out/${top}-synthesis.log"
-          done
+      - name: Verify Python, integrated RTL, demos and generic synthesis
+        run: python3 verify.py
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -96,12 +96,26 @@ endmodule
 ''',['rtl/uart.sv'])
     return 257
 
+def board_uart_check() -> int:
+    rng=random.Random(2026)
+    cases=[(0,0,1023,1),(65535,1023,0,1),(3,500,502,1),(4,503,500,1),
+           (5,500,0,0),(6,65535,0,1),(7,0,0,255)]
+    cases += [(i,rng.randrange(1100),rng.randrange(1100),rng.randrange(4)) for i in range(8,33)]
+    requests=[r.request(*case) for case in cases]
+    replies=[r.ModelBackend().exchange(wire) for wire in requests]
+    (OUT/'board-input.txt').write_text('\n'.join(w.hex() for w in requests)+'\n')
+    (OUT/'board-expected.txt').write_text('\n'.join(f'{b:02x}' for w in replies for b in w)+'\n')
+    bench=(ROOT/'sim/board_uart_tb.sv').read_text().replace('__COUNT__',str(len(cases)))
+    simulate('board_uart_tb',bench,['rtl/rally.sv','rtl/uart.sv','board/rally_as02mc04.sv'])
+    return len(cases)
+
 def main() -> None:
     for tool in ('iverilog', 'vvp'):
         if not shutil.which(tool):
             raise SystemExit(f'{tool} is required; RTL verification NOT RUN')
     OUT.mkdir(parents=True, exist_ok=True)
-    counts = {'rally_transactions': rally_check(), 'uart_cases': uart_check()}
+    counts = {'rally_transactions': rally_check(), 'uart_cases': uart_check(),
+              'board_uart_requests': board_uart_check()}
     result = {'status': 'PASS', 'engine': 'Icarus Verilog',
               'counts': counts, 'hardware_tested': False}
     (OUT / 'results.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')

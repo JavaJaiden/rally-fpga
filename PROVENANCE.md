@@ -7,7 +7,7 @@ HDL harness, workflow and documentation have been separated for standalone use.
 The original MIT notice is retained. The implementation was developed with AI assistance.
 
 The source archive was checked against all 24 source/workflow Git blob hashes before
-splitting. Current verification is recorded in `evidence/standalone-verification.json`;
+splitting. Split-baseline verification was recorded in `evidence/standalone-verification.json`;
 previous combined-lab counts are not presented as new standalone results.
 
 Board references:
@@ -17,3 +17,9 @@ Board references:
 
 The board files are candidates, not a verified bitstream. This is a controller for
 the included game; it does not access other programs or bypass their protections.
+
+## Local hardening and showcase release
+
+Subsequent commits add integrated tests, reproducible generic synthesis and shareable
+demos. Current audit evidence is in `evidence/local-verification/results.json`.
+The original split logs remain historical; physical board operation is still unverified.
