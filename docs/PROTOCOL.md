@@ -12,8 +12,8 @@ The check vector `123456789` produces 0xF4.
 | 0 | 1 | Magic 0xA5 |
 | 1 | 1 | Version 1 |
 | 2 | 2 | Sequence |
-| 4 | 2 | Ball Y, valid 0–1023 |
-| 6 | 2 | Paddle Y, valid 0–1023 |
+| 4 | 2 | Ball Y, valid 0 through 1023 |
+| 6 | 2 | Paddle Y, valid 0 through 1023 |
 | 8 | 1 | Flags: bit 0 enables; other bits must be zero |
 | 9 | 1 | CRC-8 |
 
@@ -47,3 +47,36 @@ fallback to the model. Serial exchange uses a 100 ms reply deadline.
 
 CRC and a wrapping 16-bit sequence identify common corruption/stale replies, not a
 security or anti-cheat mechanism. They provide no authentication or replay-proof channel.
+
+## Remote transport
+
+The relay listens only on IPv4 loopback. An SSH local forward carries the connection
+between the player and friend machines. TCP byte-stream reads use a single deadline
+for the whole frame, including fragmented arrivals; see the [Python socket reference](https://docs.python.org/3.10/library/socket.html).
+
+The server sends a five-byte greeting immediately after accepting a connection:
+
+| Bytes | Meaning |
+| --- | --- |
+| 0 through 3 | ASCII `RLY1`, transport version 1 |
+| 4 | Backend: 0=model, 1=RTL, 2=serial |
+
+The greeting reports the selected backend. It does not authenticate the friend or
+prove hardware identity. SSH authenticates the host; the friend verifies the FPGA.
+`--expect-backend` lets the player reject an unintended model or simulator.
+
+After the greeting, each request is the existing ten-byte Rally frame. Each response
+is eight bytes: status 0 followed by the seven-byte Rally reply, or status 1 followed
+by seven zero bytes for a rejected/unavailable controller transaction. There are no
+variable-length payloads, executable commands or software downloads.
+
+The relay owns one controller and processes one connected client at a time. It closes
+a connection after two seconds without a complete request. A partial request is discarded
+when that connection closes. CRC rejection keeps the connection open so a later valid
+request can proceed.
+
+The client uses a total transaction deadline, checks the existing reply CRC and sequence,
+and rejects movement outside the existing bounds. Timeout, EOF, an unknown transport
+status or an invalid reply closes the socket. Later frames apply zero movement until
+the player restarts the client. A status-1 controller rejection applies zero movement
+for that transaction but leaves the socket open.

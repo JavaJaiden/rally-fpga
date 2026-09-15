@@ -1,0 +1,15 @@
+REMOTE / SYSTEMVERILOG SIMULATION (no FPGA)
+{
+  "frame": 999,
+  "x": 744,
+  "y": 420,
+  "paddle": 416,
+  "move": 4,
+  "status": 0,
+  "error": "",
+  "host_rtt_ns": 3985042,
+  "hits": 4,
+  "misses": 0,
+  "enabled": true,
+  "backend": "REMOTE / SYSTEMVERILOG SIMULATION (no FPGA)"
+}

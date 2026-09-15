@@ -1,0 +1,6 @@
+PASS rally: 1170 transactions, corruption, recovery and reply stalls
+PASS UART: 256 bytes and invalid-stop rejection
+/Users/jaiden/Documents/Codex_FPGA_Handoff/rally-fpga/out/rtl/uart_tb.sv:34: $finish called at 211600000 (1ps)
+PASS board-wrapper UART: 32 requests, default 868-clock divisor, CRC rejection, framing and partial-gap recovery
+/Users/jaiden/Documents/Codex_FPGA_Handoff/rally-fpga/out/rtl/board_uart_tb.sv:73: $finish called at 63520770000 (1ps)
+{"status": "PASS", "engine": "Icarus Verilog", "counts": {"rally_transactions": 1170, "uart_cases": 257, "board_uart_requests": 32}, "hardware_tested": false}

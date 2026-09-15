@@ -23,3 +23,9 @@ the included game; it does not access other programs or bypass their protections
 Subsequent commits add integrated tests, reproducible generic synthesis and shareable
 demos. Current audit evidence is in `evidence/local-verification/results.json`.
 The original split logs remain historical; physical board operation is still unverified.
+
+## Remote controller transport
+
+The remote client and relay are new Python components around the existing request/reply
+protocol. SSH carries their connection between machines. The FPGA RTL remains unchanged.
+Network revision evidence is retained under `evidence/remote-verification/`.

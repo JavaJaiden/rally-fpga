@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "transport": "loopback TCP, separate processes",
+  "physical_board_tested": false,
+  "ssh_tunnel_tested": false,
+  "runs": [
+    {
+      "backend": "model",
+      "frames": 1000,
+      "rejected": 43,
+      "matches_direct_game": true
+    },
+    {
+      "backend": "rtl",
+      "frames": 1000,
+      "rejected": 43,
+      "matches_direct_game": true
+    }
+  ]
+}

@@ -8,3 +8,4 @@ out/
 !evidence/*.log
 .venv/
 !evidence/local-verification/*.log
+!evidence/remote-verification/*.log

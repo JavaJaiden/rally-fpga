@@ -1,0 +1,15 @@
+REMOTE / PYTHON MODEL (no FPGA)
+{
+  "frame": 999,
+  "x": 744,
+  "y": 420,
+  "paddle": 416,
+  "move": 4,
+  "status": 0,
+  "error": "",
+  "host_rtt_ns": 52583,
+  "hits": 4,
+  "misses": 0,
+  "enabled": true,
+  "backend": "REMOTE / PYTHON MODEL (no FPGA)"
+}

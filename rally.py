@@ -1,6 +1,6 @@
 """Rally: explicit, authorized external control of the game in this file.
 
-Three distinct backends: Python model, actual RTL simulation, and UART hardware.
+Backends: Python model, RTL simulation, local UART, or a relay on a friend's machine.
 No process-memory access, input injection, DMA, or third-party game integration.
 """
 from __future__ import annotations
@@ -233,8 +233,11 @@ class Game:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--backend', choices=['model', 'rtl', 'serial'], default='model')
+    parser.add_argument('--backend', choices=['model', 'rtl', 'serial', 'remote'], default='model')
     parser.add_argument('--port', help='USB-UART device; required for serial backend')
+    parser.add_argument('--remote-port', type=int, default=4768, help='local port forwarded to the friend relay')
+    parser.add_argument('--remote-timeout', type=float, default=.25, help='total reply deadline in seconds')
+    parser.add_argument('--expect-backend', choices=['model', 'rtl', 'serial'], help='require this backend at the remote relay')
     parser.add_argument('--headless', type=int, default=0, metavar='FRAMES')
     parser.add_argument('--trace', type=Path, default=ROOT / 'out/rally.jsonl')
     parser.add_argument('--fault-every', type=int, default=0)
@@ -243,8 +246,14 @@ def main() -> None:
         parser.error('frame counts cannot be negative')
     if args.backend == 'serial' and not args.port:
         parser.error('--port is required for --backend serial')
-    backend = {'model': ModelBackend, 'rtl': RTLBackend,
-               'serial': lambda: SerialBackend(args.port)}[args.backend]()
+    from remote import RemoteBackend
+    try:
+        backend = {'model': ModelBackend, 'rtl': RTLBackend,
+                   'serial': lambda: SerialBackend(args.port),
+                   'remote': lambda: RemoteBackend(port=args.remote_port, timeout=args.remote_timeout,
+                                                   expected_backend=args.expect_backend)}[args.backend]()
+    except (OSError, ValueError, RuntimeError) as exc:
+        parser.exit(1, f'Cannot start {args.backend} backend: {exc}\n')
     game = Game()
     args.trace.parent.mkdir(parents=True, exist_ok=True)
     print(backend.label, flush=True)

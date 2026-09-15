@@ -1,87 +1,126 @@
 # Rally FPGA
 
-### An external cheat for a game we control
+A remote cheat controller for the included Pong game, hosted on a friend's machine.
 
-Rally automatically moves the paddle in an included Pong game. The game sends its
-state to a separate controller and accepts a small, checked movement in return.
-Use the Python reference, actual SystemVerilog simulation, or a separately verified
-UART device. The selected backend is always visible.
+You run the included Pong game on your computer. Your friend runs a relay and connects
+the FPGA to their computer. Rally sends the ball and paddle positions over an SSH tunnel;
+the FPGA returns a bounded paddle movement. Your computer needs a network connection
+and the Rally client, with no FPGA, USB adapter or other peripheral attached.
 
-![Rally recorded RTL demonstration](docs/preview.png)
+![Player and friend machine layout](docs/architecture.svg)
 
-**Show it:** download or clone this repository and open **[docs/demo.html](docs/demo.html)**
-in a browser. It is a self-contained replay of 1,000 actual RTL-backed game frames.
-Use Pause, the frame slider and speed control to inspect movement and rejected requests.
-GitHub shows the HTML source; download it to run it. No server or FPGA is needed for the replay.
+[Setup guide](docs/REMOTE.md) · [Protocol](docs/PROTOCOL.md) · [Demo guide](docs/SHOWCASE.md) · [Verification](docs/VERIFICATION.md)
 
-## Run it yourself
+## What runs where
 
-```sh
-python3 rally.py --backend model --headless 1000 --fault-every 23
-python3 replay.py --trace out/rally.jsonl --output out/rally-replay.html
-```
-
-For live play, install Tk (`brew install python-tk@3.14` for Homebrew Python 3.14;
-match your Python version), then run `python3 rally.py --backend model`. Space toggles
-auto-play; Escape closes the window. For actual HDL execution, install Icarus Verilog
-and use `--backend rtl`. It fails explicitly if the simulator is unavailable.
-
-The sandbox-cheat framing describes the demo accurately. Supporting another game
-requires an explicit adapter for its state and control interface; there is no universal
-"any game" compatibility or claim of invisibility.
-
-## How it works
-
-```mermaid
-flowchart LR
-    Game[Included Pong game] -->|10-byte state request| Check[Framing + CRC check]
-    Check --> Control[Bounded paddle controller]
-    Control -->|7-byte reply| Host[Sequence + status + movement validation]
-    Host --> Game
-```
-
-- Valid positions: 0–1023. Deadband: two pixels. Movement: at most eight pixels per update.
-- A bad CRC, stale sequence, invalid response or timeout produces zero movement.
-- Sequence numbers wrap after 65,536 updates; CRC detects errors and is not authentication.
-- Only one request may be outstanding. Incoming bytes during a pending reply are discarded.
-- Host round-trip measurements include Python, scheduling and transport overhead; they are not FPGA latency.
-
-Read the [wire protocol](docs/PROTOCOL.md) and [two-minute demo guide](docs/SHOWCASE.md).
-
-## Current local evidence
-
-| Check | Result |
+| Player's computer | Friend's computer |
 | --- | --- |
-| Python suite | 10 test methods passed |
-| Controller RTL | 1,170 transactions, corruption, recovery and reply stalls |
-| UART component | All 256 byte values plus invalid-stop rejection |
-| Actual board wrapper in simulation | 32 requests at the default UART divisor, independent reply sampler, corrupted CRC, framing recovery and partial-frame expiry |
-| Game replay | 1,000 model and 1,000 RTL frames; identical game states; 43 corrupt requests rejected per backend |
-| Generic synthesis | `rally_framer`, `uart_rx`, `uart_tx` passed |
+| Pong game and remote client | Relay process |
+| Python and Tk for the game window | Python and pyserial for UART |
+| OpenSSH client | SSH access configured by the friend |
+| Network connection | FPGA, UART adapter, board power and cooling |
 
-## Physical UART
+The relay sends controller responses. It does not broadcast executable software or
+install anything on the player's device. The player starts the client themselves.
+One player can use a relay at a time.
 
-The [AS02MC04 board procedure](board/README.md) covers the candidate wrapper and
-constraints. Identify the actual part, pinout, voltage, power and cooling before building
-or connecting hardware. The simulation uses behavioral clock-buffer models and does not
-validate board electrical behavior.
+## Try the connection without a board
 
-After independent board bring-up, install `pyserial==3.5` and run:
+Clone or download this repository, then open two terminals in its directory.
 
-```sh
-python3 rally.py --backend serial --port YOUR_SERIAL_DEVICE
-```
-
-## Verification you can reproduce
+In the first terminal:
 
 ```sh
-python3 -m unittest -v       # Python only
-python3 sim/check_rtl.py     # Actual Icarus Verilog simulation
-python3 verify.py            # Python + integrated RTL + demos + generic synthesis
+python3 relay.py --backend model
 ```
 
-Python 3.10+ and Git are required. The reference demo has no third-party Python dependencies.
-Install Icarus Verilog (`iverilog` and `vvp`) for RTL. On macOS:
+In the second:
+
+```sh
+python3 rally.py --backend remote --expect-backend model
+```
+
+The window identifies the remote Python model. Space toggles assistance; Escape closes
+the game. This checks the network path on one computer. Use `--backend rtl` on the relay
+and `--expect-backend rtl` on the client to run compiled SystemVerilog instead.
+
+Python 3.10 or later is required. The window also needs Tk. For Homebrew Python 3.14,
+install it with `brew install python-tk@3.14`; use the matching Tk package for other
+Python versions. Headless runs do not need Tk:
+
+```sh
+python3 rally.py --backend remote --expect-backend model --headless 1000 --fault-every 23
+```
+
+## Use your friend's FPGA
+
+First complete the [board bring-up procedure](board/README.md). Then follow these steps
+on the indicated machine. Replace the uppercase placeholders with the actual device,
+SSH account and host. The friend must already allow your SSH account to connect.
+
+### 1. Friend: start the relay
+
+```sh
+python3 -m pip install pyserial==3.5
+python3 relay.py --backend serial --port YOUR_UART_DEVICE
+```
+
+The relay listens on `127.0.0.1:4768` on the friend's machine. The FPGA is attached there.
+
+### 2. Player: open the tunnel
+
+```sh
+ssh -N -T -o ExitOnForwardFailure=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+  -L 127.0.0.1:4768:127.0.0.1:4768 FRIEND_USER@FRIEND_HOST
+```
+
+Leave that terminal open. [OpenSSH local forwarding](https://man.openbsd.org/ssh#L)
+connects your local port to the relay through the authenticated SSH connection. Verify
+the friend's host key when connecting for the first time.
+
+### 3. Player: start the game
+
+```sh
+python3 rally.py --backend remote --expect-backend serial
+```
+
+The client checks that the relay reports a UART backend. Your friend still needs to
+verify which board and bitstream are attached. See the [setup guide](docs/REMOTE.md)
+for changing ports, diagnosing timeouts and stopping the session.
+
+## Watch a recorded run
+
+Download [docs/demo.html](docs/demo.html) and open it in a browser. It contains a replay
+of 1,000 frames sent through a separate relay process running actual RTL. The retained
+run used two processes on one computer; it did not use a physical FPGA or an internet
+connection. GitHub displays the HTML source, so download the file to play it.
+
+![Recorded remote-controller run](docs/preview.png)
+
+## Control and failure behavior
+
+Rally accepts positions from 0 through 1023, uses a two-pixel deadband and limits each
+movement to eight pixels. The client checks the reply's CRC, sequence, status and bounds.
+Rejected requests produce zero movement. A network timeout or malformed reply closes
+the connection so a late response cannot move the paddle on a later frame. Restart the
+client to reconnect; it never switches to a local controller automatically.
+
+Remote mode waits for one reply per game update. Network delay therefore reduces the
+update rate. The default transaction deadline is 250 ms and can be set with
+`--remote-timeout`. This is a Pong controller with a remote transport, not a universal
+adapter for arbitrary games. Another game needs its own supported state and control
+interface. Nothing here establishes anti-cheat invisibility.
+
+## Run the checks
+
+```sh
+python3 -m unittest -v       # Reference model, socket transport and replay tests
+python3 sim/check_rtl.py    # Actual RTL and board-wrapper simulation
+python3 sim/check_remote.py # Separate relay/client processes, model and RTL
+python3 verify.py           # All checks, demos and generic synthesis
+```
+
+For the full verifier, install Icarus Verilog and Yosys. A macOS setup is:
 
 ```sh
 brew install icarus-verilog
@@ -92,24 +131,26 @@ python3 verify.py
 ```
 
 The verifier accepts native `yosys`, [YoWASP Yosys](https://yowasp.org/), or an explicit
-`YOSYS=/path/to/executable`. It saves logs, tool versions and source SHA-256 hashes under
-`out/verification/`. Missing tools or failed commands produce a failing exit status and
-manifest. [Generic synthesis](https://yosyshq.readthedocs.io/projects/yosys/en/v0.65/using_yosys/synthesis/synth.html)
-checks the logic structure; it does not establish device utilization, clock frequency,
-routed timing or electrical operation.
+`YOSYS=/path/to/executable`. It writes fresh logs and source hashes to `out/verification/`.
 
-The [retained local verification](evidence/local-verification/results.json) records the
-showcase checks. Earlier files in `evidence/` describe the original publication baseline.
-The [GitHub workflow](.github/workflows/verify.yml) runs the same verifier, but hosted
-Actions were blocked before execution by account billing/spending limits during the
-local audit. That is separate from the passing local results.
+| Local check | Coverage |
+| --- | --- |
+| Python | 20 test methods, including real sockets and failure handling |
+| Controller RTL | 1,170 transactions, corruption, recovery and reply stalls |
+| UART | 256 byte values and invalid-stop rejection |
+| Board wrapper in simulation | 32 requests at the default UART divisor, CRC and framing recovery |
+| Remote relay | 1,000 model and 1,000 RTL frames; each matches its direct run and rejects 43 corrupt requests |
+| Generic synthesis | Framer, UART receiver and UART transmitter |
 
-## What remains outside this release
+The [retained network verification](evidence/remote-verification/results.json) records
+the exact source hashes. [Earlier evidence](evidence/local-verification/results.json)
+remains available for the previous revision. Hosted GitHub Actions were blocked by
+account billing during verification; the local checks run independently.
 
-No physical FPGA board, placed-and-routed design, timing closure, or measured hardware
-latency is certified. These are demonstrable software and RTL projects. See the
-[verification contract](docs/VERIFICATION.md) for coverage and remaining boundaries.
+Physical-board operation, two-computer SSH use, internet latency and routed timing still
+need testing in that environment. The [verification guide](docs/VERIFICATION.md) separates
+those checks from the passing software and simulator results.
 
-## License and attribution
+## License and source
 
-MIT. See [LICENSE](LICENSE) and [PROVENANCE.md](PROVENANCE.md).
+MIT. [LICENSE](LICENSE) and [PROVENANCE.md](PROVENANCE.md) retain the source credits.

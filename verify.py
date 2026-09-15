@@ -68,7 +68,9 @@ def main() -> None:
                 raise RuntimeError('Unexpected demo length or fault count')
             if any(row['move'] for row in trace if row['error']):
                 raise RuntimeError('Rejected frame moved the paddle')
-        run('replay',[sys.executable,'replay.py','--trace','out/rally-rtl.jsonl','--output','out/rally-replay.html'])
+        run('remote-tests', [sys.executable, 'sim/check_remote.py'], timeout=300)
+        report['levels']['remote'] = json.loads((ROOT/'out/remote/results.json').read_text())
+        run('replay',[sys.executable,'replay.py','--trace','out/remote/rtl.jsonl','--output','out/rally-replay.html'])
         report['levels']['demo']={'status':'PASS','frames_per_backend':1000,'rejected_per_backend':43,
                                  'model_rtl_game_states_identical':True}
         yosys = os.environ.get('YOSYS') or shutil.which('yosys') or shutil.which('yowasp-yosys')

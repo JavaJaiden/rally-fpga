@@ -1,0 +1,26 @@
+test_all_single_bit_corruptions (test_models.RallyTests.test_all_single_bit_corruptions) ... ok
+test_control_boundaries (test_models.RallyTests.test_control_boundaries) ... ok
+test_crc_known_vector (test_models.RallyTests.test_crc_known_vector) ... ok
+test_disabled_and_deterministic_game (test_models.RallyTests.test_disabled_and_deterministic_game) ... ok
+test_game_failure_is_zero_movement (test_models.RallyTests.test_game_failure_is_zero_movement) ... ok
+test_reject_stale_unsafe_and_bad_status (test_models.RallyTests.test_reject_stale_unsafe_and_bad_status) ... ok
+test_request_roundtrip_random (test_models.RallyTests.test_request_roundtrip_random) ... ok
+test_rtl_timeout_stays_fail_closed_on_later_frames (test_models.RallyTests.test_rtl_timeout_stays_fail_closed_on_later_frames) ... ok
+test_backend_failure_does_not_apply_a_move (test_remote.RemoteTests.test_backend_failure_does_not_apply_a_move) ... ok
+test_bad_remote_ports_are_rejected_before_connecting (test_remote.RemoteTests.test_bad_remote_ports_are_rejected_before_connecting) ... ok
+test_expected_backend_mismatch_is_rejected (test_remote.RemoteTests.test_expected_backend_mismatch_is_rejected) ... ok
+test_fragmented_request_and_two_coalesced_requests (test_remote.RemoteTests.test_fragmented_request_and_two_coalesced_requests) ... ok
+test_late_reply_is_discarded_and_later_game_steps_stay_zero (test_remote.RemoteTests.test_late_reply_is_discarded_and_later_game_steps_stay_zero) ... ok
+test_partial_reply_and_disconnect_cannot_apply_movement (test_remote.RemoteTests.test_partial_reply_and_disconnect_cannot_apply_movement) ... ok
+test_partial_request_does_not_contaminate_next_connection (test_remote.RemoteTests.test_partial_request_does_not_contaminate_next_connection) ... ok
+test_relay_refuses_nonloopback_binding (test_remote.RemoteTests.test_relay_refuses_nonloopback_binding) ... ok
+test_remote_game_matches_local_model_and_rejects_bad_crc (test_remote.RemoteTests.test_remote_game_matches_local_model_and_rejects_bad_crc) ... ok
+test_stale_or_unsafe_server_reply_closes_the_connection (test_remote.RemoteTests.test_stale_or_unsafe_server_reply_closes_the_connection) ... ok
+test_mixed_backends_rejected (test_replay.ReplayTests.test_mixed_backends_rejected) ... ok
+test_replay_retains_trace_digest_and_escapes_label (test_replay.ReplayTests.test_replay_retains_trace_digest_and_escapes_label) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 0.336s
+
+OK
+Wrote 1 recorded frames to /var/folders/9_/wv598cvx6gg5p7yzbck0rjcr0000gn/T/tmphbuw9nyc/out.html

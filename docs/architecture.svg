@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="430" viewBox="0 0 1100 430" role="img" aria-labelledby="title desc">
+<title id="title">Rally: player's computer and friend's FPGA host</title>
+<desc id="desc">The player's game and client send state through an SSH tunnel to a relay on the friend's machine. Only the friend's machine is connected to the FPGA over UART. Controller replies return through the same tunnel.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse"><path d="M0 0L8 4L0 8Z" fill="#a8e977"/></marker></defs>
+<rect width="1100" height="430" rx="18" fill="#101925"/>
+<g font-family="system-ui,sans-serif">
+<text x="38" y="43" fill="#a8e977" font-size="15" font-weight="700" letter-spacing="2">RALLY / REMOTE CONTROLLER</text>
+<rect x="38" y="70" width="340" height="290" rx="12" fill="#172536" stroke="#34465d"/>
+<text x="62" y="110" font-size="25" font-weight="650" fill="#f3f7fc">Player's computer</text>
+<text x="62" y="139" font-size="15" fill="#b8c7d9">No FPGA or adapter attached</text>
+<rect x="62" y="165" width="292" height="68" rx="8" fill="#23364b"/>
+<text x="84" y="194" fill="#fff" font-size="18">Pong game + remote client</text>
+<text x="84" y="216" fill="#b8c7d9" font-size="14">Exports state, checks movement</text>
+<text x="62" y="274" fill="#b8c7d9" font-size="15">Python / Tk / OpenSSH</text>
+<text x="62" y="304" fill="#b8c7d9" font-size="15">The player starts the software</text>
+<path d="M395 188H670" stroke="#a8e977" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="532" y="171" text-anchor="middle" fill="#eef5fc" font-size="15">Game state</text>
+<path d="M670 249H395" stroke="#a8e977" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="532" y="278" text-anchor="middle" fill="#eef5fc" font-size="15">Checked movement</text>
+<text x="532" y="224" text-anchor="middle" fill="#a8e977" font-size="14" font-weight="600">SSH tunnel</text>
+<rect x="692" y="70" width="370" height="290" rx="12" fill="#172536" stroke="#34465d"/>
+<text x="716" y="110" font-size="25" font-weight="650" fill="#f3f7fc">Friend's computer</text>
+<text x="716" y="139" font-size="15" fill="#b8c7d9">The FPGA stays here</text>
+<rect x="716" y="165" width="322" height="54" rx="8" fill="#23364b"/>
+<text x="738" y="199" fill="#fff" font-size="18">Relay on 127.0.0.1:4768</text>
+<path d="M877 225V257" stroke="#a8e977" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<text x="900" y="248" fill="#b8c7d9" font-size="13">UART</text>
+<rect x="716" y="271" width="322" height="61" rx="8" fill="#203d34" stroke="#47715c"/>
+<text x="738" y="307" fill="#ceefb7" font-size="19">FPGA paddle controller</text>
+<text x="38" y="398" fill="#b8c7d9" font-size="14">Replies cross the network. Software runs locally on each computer. Hardware operation requires separate board verification.</text>
+</g></svg>

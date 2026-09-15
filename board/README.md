@@ -47,11 +47,15 @@ First reproduce `python3 -m unittest -v` and `python3 sim/check_rtl.py`. Then re
 
 Check UART idle-high level and approximately 8.68 microseconds per bit. At 100 MHz, the configured divisor 868 yields about 115,207 baud. Send one request at a time. Verify a centered target, both movement directions, disabled control, bad coordinates, corrupted CRC, partial request, reconnect and reset. A rejected or missing response must produce zero movement in the custom game.
 
-Run the serial backend only after these checks:
+On the friend's machine, run the relay only after these checks:
 
 ```sh
 python3 -m pip install pyserial==3.5
-python3 rally.py --backend serial --port YOUR_SERIAL_DEVICE
+python3 relay.py --backend serial --port YOUR_SERIAL_DEVICE
 ```
 
 Record the serial device, bitstream hash, board photograph, protocol trace and any logic-analyzer capture together. A serial response alone does not prove which board or bitstream produced it. No such physical acceptance record is included in this delivery.
+
+The player connects through the [remote setup](../docs/REMOTE.md). All board wiring and
+power remain on the friend's machine. The network transport does not change this board
+acceptance procedure.
